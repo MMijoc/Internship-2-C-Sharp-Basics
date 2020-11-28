@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 enum error
 {
@@ -16,7 +17,6 @@ namespace PlaylistMaker
 			return SelectMenu();
 		}
 
-
 		static int PrintMenu()
 		{
 			Console.WriteLine("Izbornik:");
@@ -31,17 +31,23 @@ namespace PlaylistMaker
 			Console.WriteLine("9 - Uređivanje rednog broja pjesme, odnosno premještanje pjesme na novi redni broj u listi:");
 			Console.WriteLine("10 - Shuffle pjesama, odnosno nasumično premještanje elemenata liste:");
 			Console.WriteLine("11 - izlaz");
-			Console.WriteLine("Izbor: ");
+			Console.Write("Izbor: ");
 
 			return (int)error.SUCCESS;
 		}
-
 
 		static int SelectMenu()
 		{
 			var input = "";
 			var select = 0;
 			var isNumber = true;
+
+			Dictionary<int, string> playListDictionary = new Dictionary<int, string>();
+
+			//playListDictionary.Add(1, "Accross the rainbow bridege");
+			//playListDictionary.Add(2, "Elan");
+			//playListDictionary.Add(3, "Noldor");
+
 
 			while (true)
 			{
@@ -56,7 +62,7 @@ namespace PlaylistMaker
 				}
 
 				if (select == 1) {
-					
+					PrintList(playListDictionary);
 
 				} else if (select == 2) {
 					
@@ -89,16 +95,32 @@ namespace PlaylistMaker
 					break;
 
 				} else {
-					Console.WriteLine("Nepoznata naredba \"{0}\"\nPritnisni bilo koju tipku za nastavak . . .", input);
-					Console.ReadLine();
-					Console.Clear();
-					continue;
+					Console.WriteLine("Nepoznata naredba \"{0}\"", input);
 				}
+				Console.WriteLine("\nPritnisni bilo koju tipku za nastavak . . .");
+				Console.ReadLine();
+				Console.Clear();
 
 			}
 
 			return (int)error.SUCCESS;
 		}
+
+		static int PrintList(Dictionary<int, string> playList)
+		{
+			if (playList.Count == 0) {
+				Console.WriteLine("Playlista je prazna!");
+				return (int)error.FAILURE;
+			}
+
+			Console.WriteLine("\n{0, -8} {1, -32}", "ID", "Song name");
+			foreach (KeyValuePair<int, string> song in playList) {
+				Console.WriteLine("{0, -8} {1, -32}", song.Key, song.Value);
+			}
+
+			return (int)error.SUCCESS;
+		}
+
 
 	}
 }
