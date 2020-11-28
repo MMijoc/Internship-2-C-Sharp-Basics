@@ -30,7 +30,7 @@ namespace PlaylistMaker
 			Console.WriteLine("8 - Uređivanje imena pjesme:");
 			Console.WriteLine("9 - Uređivanje rednog broja pjesme, odnosno premještanje pjesme na novi redni broj u listi:");
 			Console.WriteLine("10 - Shuffle pjesama, odnosno nasumično premještanje elemenata liste:");
-			Console.WriteLine("11 - izlaz");
+			Console.WriteLine("0 - izlaz");
 			Console.Write("Izbor: ");
 
 			return (int)error.SUCCESS;
@@ -122,7 +122,8 @@ namespace PlaylistMaker
 					}
 
 				} else if (select == 8) {
-
+					songID = InputNumber("Unesite redni broj pjesme koju želite preimenovati: ");
+					RenameSong(playListDictionary, songID);
 
 				} else if (select == 9) {
 
@@ -130,7 +131,7 @@ namespace PlaylistMaker
 				} else if (select == 10) {
 
 
-				} else if (select == 11) {
+				} else if (select == 0) {
 						break;
 
 				} else {
@@ -315,7 +316,23 @@ namespace PlaylistMaker
 				return (int)error.FAILURE;
 		}
 
+		static int RenameSong(Dictionary<int, string> playList, int songID)
+		{
+			if (playList.ContainsKey(songID) != true) {
+				Console.WriteLine("Ne psotoji pjesma s rednim brojem \"{0}\"", songID);
+				return (int)error.FAILURE;
+			}
 
+			Console.Write("Kako zelite preimenovati pjesmu  \"{0}\": ", playList[songID]);
+			string input = Console.ReadLine();
+			Console.WriteLine("Premienuj \"{0}\" u \"{1}\"", playList[songID], input);
+			if (ConfirmAction() == true) {
+				Console.WriteLine("Pjesma \"{0}\" je preimenovana u \"{1}\"", playList[songID], input);
+				playList[songID] = input;
+			}
+
+			return (int)error.SUCCESS;
+		}
 
 	}
 }
