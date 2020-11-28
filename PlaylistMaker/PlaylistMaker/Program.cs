@@ -42,12 +42,19 @@ namespace PlaylistMaker
 			var select = 0;
 			var isNumber = true;
 			var songID = 0;
+			var songName = "";
+			var lastSongID = 0;
 
 			Dictionary<int, string> playListDictionary = new Dictionary<int, string>();
 
-			playListDictionary.Add(1, "Accross the rainbow bridge");
-			playListDictionary.Add(2, "Elan");
-			playListDictionary.Add(3, "Noldor");
+			//lastSongID++;
+			//playListDictionary.Add(lastSongID, "Accross the rainbow bridge");
+
+			//lastSongID++;
+			//playListDictionary.Add(lastSongID, "Elan");
+
+			//lastSongID++;
+			//playListDictionary.Add(lastSongID, "Noldor");
 
 
 			while (true)
@@ -87,7 +94,18 @@ namespace PlaylistMaker
 					PrintSong(playListDictionary, input);
 
 				} else if (select == 4) {
-					
+					Console.Write("Unseite ime nove pjesme: ");
+					songName = Console.ReadLine();
+
+					Console.WriteLine("Jeste li sigurni da zelite unijeti novu pjesmu pod imenom: \"{0}\"", songName);
+					Console.WriteLine("DA NE?");
+					input = Console.ReadLine();
+					if (input == "DA") { 
+						AddSong(playListDictionary, songName);
+						Console.WriteLine("Pjesma je dodana na karaj playliste!");
+					} else {
+						Console.WriteLine("Promjene odbačene, pjesma nije dodana!");
+					}
 
 				} else if (select == 5) {
 					
@@ -179,7 +197,21 @@ namespace PlaylistMaker
 
 		}
 
+		static int AddSong(Dictionary<int, string> playList, string songName)
+		{
+			var newSongID = playList.Count;
+			newSongID++;
 
+			foreach(KeyValuePair<int, string> song in playList)
+				if (song.Value == songName) {
+					Console.WriteLine("Pjesma s imenom \"{0}\" već postoji!", songName);
+					return (int)error.FAILURE;
+				}
+
+			playList.Add(newSongID, songName);
+
+			return (int)error.SUCCESS;
+		}
 
 
 
