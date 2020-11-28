@@ -45,13 +45,14 @@ namespace PlaylistMaker
 			var songName = "";
 			Dictionary<int, string> playListDictionary = new Dictionary<int, string>();
 
-			char c;
-			string s;
-			for (int i = 1; i < 10; i++) {
-				c = (char)('A' + i - 1);
-				s = c.ToString();
-				playListDictionary.Add(i, s);
-			}
+			//uncomment for quick testing samples
+			//char c;
+			//string s;
+			//for (int i = 1; i < 10; i++) {
+			//	c = (char)('A' + i - 1);
+			//	s = c.ToString();
+			//	playListDictionary.Add(i, s);
+			//}
 
 
 			while (true)
@@ -61,7 +62,6 @@ namespace PlaylistMaker
 				isNumber = false;
 				songID = 0;
 				songName = "";
-
 
 				PrintMenu();
 				isNumber = int.TryParse(input = Console.ReadLine(), out select);
@@ -91,8 +91,8 @@ namespace PlaylistMaker
 					songName = Console.ReadLine();
 
 					if (ConfirmAction() == true) {
-						AddSong(playListDictionary, songName);
-						Console.WriteLine("Pjesma je dodana na kraj playliste!");
+						if (AddSong(playListDictionary, songName) == (int)error.SUCCESS)
+							Console.WriteLine("Pjesma je dodana na kraj playliste!");
 					} else {
 						Console.WriteLine("Promjene odbačene, pjesma nije dodana!");
 					}
@@ -119,10 +119,14 @@ namespace PlaylistMaker
 					RenameSong(playListDictionary, songID);
 
 				} else if (select == 9) {
-					ReorderSong(playListDictionary);
+					ReorderSongs(playListDictionary);
 
 				} else if (select == 10) {
-
+					Console.WriteLine("Želite li nasumično izmješati playlisu?");
+					if (ConfirmAction() == true) {
+						ShufflePlaylist(playListDictionary);
+						Console.WriteLine("Playlista je uspješno izmješana");
+					}
 
 				} else if (select == 0) {
 					break;
@@ -327,7 +331,7 @@ namespace PlaylistMaker
 			return (int)error.SUCCESS;
 		}
 
-		static int ReorderSong(Dictionary<int, string> playList)
+		static int ReorderSongs(Dictionary<int, string> playList)
 		{
 			bool contains = false;
 			int n = playList.Count;
@@ -388,6 +392,31 @@ namespace PlaylistMaker
 
 			//PrintList(tmpDict);
 			//PrintList(playList);
+
+			return (int)error.SUCCESS;
+		}
+
+		static int ShufflePlaylist(Dictionary<int, string> playList)
+		{
+			int n = playList.Count;
+			int[] arr = new int[n];
+			int tmp, j;
+			Dictionary<int, string> tmpDict = new Dictionary<int, string>(playList);
+			Random rnd = new Random();
+
+			for (int i = 0; i < n; i++)
+				arr[i] = i + 1;
+
+			for (int i = n - 1; i > 0; i--) {
+				j = rnd.Next() % (i + 1);
+				tmp = arr[j];
+				arr[j] = arr[i];
+				arr[i] = tmp;
+			}
+
+			DeletePlaylist(playList);
+			for (int i = 0; i < n; i++)
+				playList.Add(i + 1, tmpDict[arr[i]]);
 
 			return (int)error.SUCCESS;
 		}
