@@ -13,7 +13,7 @@ namespace PlaylistMaker
 	class Program
 	{
 		static int Main(string[] args)
-		{ 
+		{
 			return SelectMenu();
 		}
 
@@ -43,32 +43,25 @@ namespace PlaylistMaker
 			var isNumber = true;
 			var songID = 0;
 			var songName = "";
-			var lastSongID = 0;
-
 			Dictionary<int, string> playListDictionary = new Dictionary<int, string>();
 
-			lastSongID++;
-			playListDictionary.Add(lastSongID, "Accross the rainbow bridge");
-
-			lastSongID++;
-			playListDictionary.Add(lastSongID, "Elan");
-
-			lastSongID++;
-			playListDictionary.Add(lastSongID, "Noldor");
-
-			lastSongID++;
-			playListDictionary.Add(lastSongID, "Mirro, Mirror");
-
-			lastSongID++;
-			playListDictionary.Add(lastSongID, "Afraid to Shoot Strangers");
+			char c;
+			string s;
+			for (int i = 1; i < 10; i++) {
+				c = (char)('A' + i - 1);
+				s = c.ToString();
+				playListDictionary.Add(i, s);
+			}
 
 
 			while (true)
 			{
 				input = "";
 				select = 0;
-
 				isNumber = false;
+				songID = 0;
+				songName = "";
+
 
 				PrintMenu();
 				isNumber = int.TryParse(input = Console.ReadLine(), out select);
@@ -126,16 +119,16 @@ namespace PlaylistMaker
 					RenameSong(playListDictionary, songID);
 
 				} else if (select == 9) {
-
+					ReorderSong(playListDictionary);
 
 				} else if (select == 10) {
 
 
 				} else if (select == 0) {
-						break;
+					break;
 
 				} else {
-						Console.WriteLine("Nepoznata naredba \"{0}\"", input);
+					Console.WriteLine("Nepoznata naredba \"{0}\"", input);
 				}
 
 				Console.WriteLine("\nPritnisni bilo koju tipku za nastavak . . .");
@@ -143,7 +136,7 @@ namespace PlaylistMaker
 				Console.Clear();
 			}
 
-				return (int)error.SUCCESS;
+			return (int)error.SUCCESS;
 		}
 
 		static int InputNumber(string message)
@@ -169,15 +162,15 @@ namespace PlaylistMaker
 		}
 		static int PrintList(Dictionary<int, string> playList)
 		{
-			if (playList.Count == 0) {
+			int n = playList.Count;
+			if (n == 0) {
 				Console.WriteLine("Playlista je prazna!");
 				return (int)error.FAILURE;
 			}
 
 			Console.WriteLine("\n{0, -8} {1, -32}", "ID", "Song name");
-			foreach (KeyValuePair<int, string> song in playList) {
-				Console.WriteLine("{0, -8} {1, -32}", song.Key, song.Value);
-			}
+			for (int i = 1; i <= n; i++)
+				Console.WriteLine("{0, -8} {1, -32}", i, playList[i]);
 
 			return (int)error.SUCCESS;
 		}
@@ -185,7 +178,7 @@ namespace PlaylistMaker
 		static int PrintSong(Dictionary<int, string> playList, int songID)
 		{
 			var exits = false;
-			foreach(KeyValuePair<int, string> song in playList) {
+			foreach (KeyValuePair<int, string> song in playList) {
 				if (song.Key == songID) {
 					Console.WriteLine("{0, -8} {1, -32}", song.Key, song.Value);
 					exits = true;
@@ -227,7 +220,7 @@ namespace PlaylistMaker
 			var newSongID = playList.Count;
 			newSongID++;
 
-			foreach(KeyValuePair<int, string> song in playList)
+			foreach (KeyValuePair<int, string> song in playList)
 				if (song.Value == songName) {
 					Console.WriteLine("Pjesma s imenom \"{0}\" već postoji!", songName);
 					return (int)error.FAILURE;
@@ -305,7 +298,7 @@ namespace PlaylistMaker
 			bool success = true;
 			int i = 1;
 
-			while(success == true && i <= n) {
+			while (success == true && i <= n) {
 				success = playList.Remove(i);
 				i++;
 			}
@@ -334,6 +327,69 @@ namespace PlaylistMaker
 			return (int)error.SUCCESS;
 		}
 
+		static int ReorderSong(Dictionary<int, string> playList)
+		{
+			bool contains = false;
+			int n = playList.Count;
+			int i;
+			int songID_1 = 0;
+			int songID_2 = 0;
+
+			Dictionary<int, string> tmpDict = new Dictionary<int, string>(playList);
+			PrintList(playList);
+
+			while (true) {
+				songID_1 = InputNumber("\nUnesite redni broj pjesme koju želite premjestit: ");
+				contains = playList.ContainsKey(songID_1);
+				if (songID_1 > 0 && songID_1 <= n)
+					break;
+				Console.WriteLine("Ne postoji pjesma s rednim brojem \"{0}\"", songID_1);
+			}
+
+			while (true) {
+				songID_2 = InputNumber("\nUnesite redni broj na koji zelite prmejstiti odabranu pjesmu: ");
+				contains = playList.ContainsKey(songID_2);
+				if (songID_2 > 0 && songID_2 <= n)
+					break;
+				Console.WriteLine("Ne postoji pjesma s rednim brojem \"{0}\"", songID_2);
+			}
+
+			Console.WriteLine("Premjsti pjesmu s rednim brojem {0}  \"{1}\" na mjesto {2}", songID_1, playList[songID_1], songID_2);
+			if (ConfirmAction() == false)
+				return (int)error.SUCCESS;
+
+
+			if (songID_1 > songID_2) {
+				DeletePlaylist(playList);
+				for (i = 1; i < songID_2; i++)
+					playList.Add(i, tmpDict[i]);
+
+				playList.Add(i, tmpDict[songID_1]);
+
+				for (i+= 1; i <= songID_1; i++)
+					playList.Add(i, tmpDict[i-1]);
+
+				for (; i <= n; i++)
+					playList.Add(i, tmpDict[i]);
+
+			} else if (songID_1 < songID_2) {
+				DeletePlaylist(playList);
+				for (i = 1; i < songID_1; i++)
+					playList.Add(i, tmpDict[i]);
+
+				for (; i < songID_2; i++)
+					playList.Add(i, tmpDict[i + 1]);
+
+				playList.Add(i, tmpDict[songID_1]);
+
+				for (i += 1; i <= n; i++)
+					playList.Add(i, tmpDict[i]);
+			}
+
+			//PrintList(tmpDict);
+			//PrintList(playList);
+
+			return (int)error.SUCCESS;
+		}
 	}
 }
-
