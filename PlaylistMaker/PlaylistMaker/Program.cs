@@ -41,16 +41,22 @@ namespace PlaylistMaker
 			var input = "";
 			var select = 0;
 			var isNumber = true;
+			var songID = 0;
 
 			Dictionary<int, string> playListDictionary = new Dictionary<int, string>();
 
-			//playListDictionary.Add(1, "Accross the rainbow bridege");
-			//playListDictionary.Add(2, "Elan");
-			//playListDictionary.Add(3, "Noldor");
+			playListDictionary.Add(1, "Accross the rainbow bridge");
+			playListDictionary.Add(2, "Elan");
+			playListDictionary.Add(3, "Noldor");
 
 
 			while (true)
 			{
+				input = "";
+				select = 0;
+
+				isNumber = false;
+
 				PrintMenu();
 				isNumber = int.TryParse(input = Console.ReadLine(), out select);
 
@@ -65,10 +71,20 @@ namespace PlaylistMaker
 					PrintList(playListDictionary);
 
 				} else if (select == 2) {
-					
+					do {
+						Console.Write("Unesite redni broj pjesme: ");
+						isNumber = int.TryParse(input = Console.ReadLine(), out songID);
+						if (isNumber)
+							PrintSong(playListDictionary, songID);
+						else
+							Console.WriteLine("Nepravilan unos!");
+
+					} while (isNumber == false);
 
 				} else if (select == 3) {
-					
+					Console.Write("Unseite ime pjesme: ");
+					input = Console.ReadLine();
+					PrintSong(playListDictionary, input);
 
 				} else if (select == 4) {
 					
@@ -120,6 +136,51 @@ namespace PlaylistMaker
 
 			return (int)error.SUCCESS;
 		}
+
+		static int PrintSong(Dictionary<int, string> playList, int songID)
+		{
+			var exits = false;
+			foreach(KeyValuePair<int, string> song in playList) {
+				if (song.Key == songID) {
+					Console.WriteLine("\n{0, -8} {1, -32}", "ID", "Song name");
+					Console.WriteLine("{0, -8} {1, -32}", song.Key, song.Value);
+					exits = true;
+					break;
+				}
+			}
+
+			if (exits != true) {
+				Console.WriteLine("Ne postoji pjesma s rednim brojem \"{0}\"", songID);
+				return (int)error.FAILURE;
+			}
+
+			return (int)error.SUCCESS;
+		}
+
+		static int PrintSong(Dictionary<int, string> playList, string songName) {
+			var exits = false;
+			foreach (KeyValuePair<int, string> song in playList)
+			{
+				if (song.Value == songName)
+				{
+					Console.WriteLine("\n{0, -8} {1, -32}", "ID", "Song name");
+					Console.WriteLine("{0, -8} {1, -32}", song.Key, song.Value);
+					exits = true;
+					break;
+				}
+			}
+
+			if (exits != true) {
+				Console.WriteLine("Ne postoji pjesma s imenom \"{0}\"", songName);
+				return (int)error.FAILURE;
+			}
+
+			return (int)error.SUCCESS;
+
+		}
+
+
+
 
 
 	}
