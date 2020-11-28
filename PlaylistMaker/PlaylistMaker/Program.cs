@@ -73,7 +73,8 @@ namespace PlaylistMaker
 				PrintMenu();
 				isNumber = int.TryParse(input = Console.ReadLine(), out select);
 
-				if (isNumber != true) {
+				if (isNumber != true)
+				{
 					Console.WriteLine("Nepoznata naredba \"{0}\"\nPritnisni bilo koju tipku za nastavak . . .", input);
 					Console.ReadLine();
 					Console.Clear();
@@ -113,30 +114,35 @@ namespace PlaylistMaker
 					DeleteSong(playListDictionary, songName);
 
 				} else if (select == 7) {
-					
+					Console.WriteLine("Jeste li sigurni da stvarno zelite izbrisati cijelu listu?");
+					if (ConfirmAction() == true) {
+						DeletePlaylist(playListDictionary);
+						Console.WriteLine("Playlista je uspjesno izbrisana");
+
+					}
 
 				} else if (select == 8) {
-					
+
 
 				} else if (select == 9) {
-					
+
 
 				} else if (select == 10) {
-					
+
 
 				} else if (select == 11) {
-					break;
+						break;
 
 				} else {
-					Console.WriteLine("Nepoznata naredba \"{0}\"", input);
+						Console.WriteLine("Nepoznata naredba \"{0}\"", input);
 				}
+
 				Console.WriteLine("\nPritnisni bilo koju tipku za nastavak . . .");
 				Console.ReadLine();
 				Console.Clear();
-
 			}
 
-			return (int)error.SUCCESS;
+				return (int)error.SUCCESS;
 		}
 
 		static int InputNumber(string message)
@@ -290,6 +296,23 @@ namespace PlaylistMaker
 			input = Console.ReadLine();
 
 			return input.Equals("da", StringComparison.OrdinalIgnoreCase);
+		}
+
+		static int DeletePlaylist(Dictionary<int, string> playList)
+		{
+			int n = playList.Count;
+			bool success = true;
+			int i = 1;
+
+			while(success == true && i <= n) {
+				success = playList.Remove(i);
+				i++;
+			}
+
+			if (success == true)
+				return (int)error.SUCCESS;
+			else
+				return (int)error.FAILURE;
 		}
 
 
